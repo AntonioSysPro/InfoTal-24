@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Instalar dependencias
         run: |
@@ -21,6 +19,9 @@ jobs:
       - name: Ejecutar script de scraping
         run: python generar_noticias.py
 
+      - name: Mostrar estado git
+        run: git status
+
       - name: Subir cambios
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,5 +29,5 @@ jobs:
           git config --global user.name 'Auto Bot'
           git config --global user.email 'bot@infotal24.com'
           git add .
-          git commit -m "Noticias actualizadas" || echo "No hay cambios para commitear"
+          git diff --cached --quiet || git commit -m "Noticias actualizadas"
           git push https://x-access-token:${GITHUB_TOKEN}@github.com/AntonioSysPro/InfoTal-24.git main
